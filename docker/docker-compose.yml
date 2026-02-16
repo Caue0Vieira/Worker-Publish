@@ -3,7 +3,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: worker-publish
+    container_name: Worker-Publish
     user: "1000:1000"
     ports:
       - "8015:80"
