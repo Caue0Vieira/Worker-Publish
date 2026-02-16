@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Infrastructure\Console\Commands;
 
-use Domain\Idempotency\Entities\Command;
 use Domain\Idempotency\Repositories\CommandInboxReadRepositoryInterface;
 use Domain\Outbox\Entities\OutboxEvent;
 use Domain\Outbox\Repositories\OutboxReadRepositoryInterface;
@@ -14,6 +13,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Infrastructure\Queue\OutboxQueuePublisher;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
 class ProcessOutboxCommand extends Command
@@ -25,11 +25,11 @@ class ProcessOutboxCommand extends Command
     protected $description = 'Processa eventos PENDING da outbox e publica no RabbitMQ';
 
     public function __construct(
-        private OutboxReadRepositoryInterface $outboxReadRepository,
-        private OutboxWriteRepositoryInterface $outboxWriteRepository,
-        private CommandInboxReadRepositoryInterface $commandInboxRepository,
-        private OutboxEventMapper $eventMapper,
-        private OutboxQueuePublisher $queuePublisher,
+        private readonly OutboxReadRepositoryInterface           $outboxReadRepository,
+        private readonly OutboxWriteRepositoryInterface $outboxWriteRepository,
+        private readonly CommandInboxReadRepositoryInterface     $commandInboxRepository,
+        private readonly OutboxEventMapper                       $eventMapper,
+        private readonly OutboxQueuePublisher                    $queuePublisher,
     ) {
         parent::__construct();
     }
@@ -39,14 +39,14 @@ class ProcessOutboxCommand extends Command
         $batchSize = (int) $this->option('batch-size');
         $maxRetries = (int) $this->option('max-retries');
 
-        $this->info("🔄 [OutboxProcessor] Starting processing (batch size: {$batchSize})");
+        $this->info("🔄 [OutboxProcessor] Starting processing (batch size: $batchSize)");
 
         try {
             $events = $this->outboxReadRepository->findPendingEvents($batchSize);
 
             if (empty($events)) {
                 $this->info('✅ [OutboxProcessor] No pending events found');
-                return Command::SUCCESS;
+                return CommandAlias::SUCCESS;
             }
 
             $this->info("📋 [OutboxProcessor] Found " . count($events) . " pending events");
@@ -77,9 +77,9 @@ class ProcessOutboxCommand extends Command
                 }
             }
 
-            $this->info("✅ [OutboxProcessor] Processing completed: {$processed} processed, {$sent} sent, {$failed} failed");
+            $this->info("✅ [OutboxProcessor] Processing completed: $processed processed, $sent sent, $failed failed");
 
-            return Command::SUCCESS;
+            return CommandAlias::SUCCESS;
         } catch (Throwable $e) {
             $this->error("💀 [OutboxProcessor] Fatal error: " . $e->getMessage());
             Log::critical("💀 [OutboxProcessor] Fatal error in ProcessOutboxCommand", [
@@ -87,7 +87,7 @@ class ProcessOutboxCommand extends Command
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return Command::FAILURE;
+            return CommandAlias::FAILURE;
         }
     }
 

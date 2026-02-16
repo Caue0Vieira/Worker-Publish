@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Infrastructure\Persistence\Repositories;
 
-use Domain\Idempotency\Entities\Command;
+use Domain\Idempotency\Entities\CommandInBox;
 use Domain\Idempotency\Repositories\CommandInboxReadRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
 class CommandInboxReadRepository implements CommandInboxReadRepositoryInterface
 {
-    public function findByCommandId(string $commandId): ?Command
+    public function findByCommandId(string $commandId): ?CommandInBox
     {
         $row = DB::table('command_inbox')
             ->where('id', $commandId)
@@ -20,7 +20,7 @@ class CommandInboxReadRepository implements CommandInboxReadRepositoryInterface
             return null;
         }
 
-        return Command::fromArray([
+        return CommandInBox::fromArray([
             'id' => $row->id,
             'idempotency_key' => $row->idempotency_key,
             'source' => $row->source,

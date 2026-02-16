@@ -10,7 +10,7 @@ use App\Jobs\ProcessCreateOccurrenceJob;
 use App\Jobs\ProcessResolveOccurrenceJob;
 use App\Jobs\ProcessStartOccurrenceJob;
 use App\Jobs\ProcessUpdateDispatchStatusJob;
-use Domain\Idempotency\Entities\Command;
+use Domain\Idempotency\Entities\CommandInBox;
 use Domain\Outbox\Entities\OutboxEvent;
 use Domain\Outbox\Services\OutboxEventMapper;
 use Illuminate\Support\Facades\Log;
@@ -32,13 +32,13 @@ class OutboxQueuePublisher
     ) {
     }
 
-    public function publishEvent(OutboxEvent $outboxEvent, Command $command): void
+    public function publishEvent(OutboxEvent $outboxEvent, CommandInBox $command): void
     {
         $commandType = $this->eventMapper->resolve($outboxEvent->eventType());
         $jobClass = $this->resolveJobClass($commandType);
 
-        $payload = is_string($command->payload()) 
-            ? json_decode($command->payload(), true) 
+        $payload = is_string($command->payload())
+            ? json_decode($command->payload(), true)
             : (array) $command->payload();
 
         $job = $this->createJobInstance(
@@ -83,7 +83,7 @@ class OutboxQueuePublisher
         string $commandType
     ) {
         $jobParams = $this->extractJobParameters($commandType, $payload);
-        
+
         $jobParams[] = $commandId;
 
         return new $jobClass(

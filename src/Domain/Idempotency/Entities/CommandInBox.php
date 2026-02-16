@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use Domain\Shared\ValueObjects\Uuid;
 use Exception;
 
-class Command
+class CommandInBox
 {
     private function __construct(
         private readonly Uuid $id,
