@@ -8,7 +8,3 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('outbox:process')
-    ->everyMinute()
-    ->runInBackground()
-    ->appendOutputTo(storage_path('logs/outbox-processor.log'));

@@ -24,7 +24,7 @@ services:
       && mkdir -p storage/framework/{sessions,views,cache/data}
       && chmod -R 775 storage bootstrap/cache
       && chown -R 1000:1000 storage bootstrap/cache
-      && php artisan schedule:work
+      && php artisan outbox:processor
       && supervisord
       "
     networks:

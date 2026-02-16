@@ -10,6 +10,7 @@ use Domain\Outbox\Repositories\OutboxReadRepositoryInterface;
 use Domain\Outbox\Repositories\OutboxWriteRepositoryInterface;
 use Domain\Outbox\Services\OutboxEventMapper;
 use Illuminate\Support\ServiceProvider;
+use Infrastructure\Console\Commands\OutboxProcessorCommand;
 use Infrastructure\Console\Commands\ProcessOutboxCommand;
 use Infrastructure\Persistence\Repositories\CommandInboxReadRepository;
 use Infrastructure\Persistence\Repositories\CommandInboxWriteRepository;
@@ -50,6 +51,7 @@ class DomainServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ProcessOutboxCommand::class,
+                OutboxProcessorCommand::class,
             ]);
         }
     }

@@ -38,8 +38,13 @@ class ProcessOutboxCommand extends Command
 
     public function handle(): int
     {
-        $batchSize = (int) $this->option('batch-size');
-        $maxRetries = (int) $this->option('max-retries');
+        $batchSize = $this->option('batch-size') !== null 
+            ? (int) $this->option('batch-size') 
+            : config('outbox.batch_size', 100);
+        
+        $maxRetries = $this->option('max-retries') !== null 
+            ? (int) $this->option('max-retries') 
+            : config('outbox.max_retries', 3);
 
         $this->info("🔄 [OutboxProcessor] Starting processing (batch size: $batchSize)");
 
