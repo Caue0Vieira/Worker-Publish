@@ -16,7 +16,7 @@ cd docker
 docker-compose up -d
 ```
 
-Isso irá subir o **Worker-Outbox** na porta `8015`.
+Isso irá subir o **Worker-Publish** na porta `8015`.
 
 ### Configuração Inicial
 
@@ -24,7 +24,7 @@ Após subir o container, execute:
 
 ```bash
 # Entrar no container do Worker
-docker exec -it worker-outbox bash
+docker exec -it worker-publish bash
 
 # Instalar dependências
 composer install
@@ -183,13 +183,13 @@ Outbox (PENDING)
 
 ## 📝 Notas Importantes
 
-1. **Jobs do Worker-Occurrence**: Os Jobs referenciados pelo `OutboxEventMapper` devem estar disponíveis no Worker-Occurrence. O Worker-Outbox apenas publica os jobs, não os processa.
+1. **Jobs do Worker-Occurrence**: Os Jobs referenciados pelo `OutboxEventMapper` devem estar disponíveis no Worker-Occurrence. O Worker-Publish apenas publica os jobs, não os processa.
 
-2. **Banco de Dados Compartilhado**: O Worker-Outbox precisa acessar o mesmo banco de dados da API para ler as tabelas `outbox` e `command_inbox`.
+2. **Banco de Dados Compartilhado**: O Worker-Publish precisa acessar o mesmo banco de dados da API para ler as tabelas `outbox` e `command_inbox`.
 
-3. **RabbitMQ Compartilhado**: O Worker-Outbox publica na mesma fila que o Worker-Occurrence consome (`occurrences.jobs`).
+3. **RabbitMQ Compartilhado**: O Worker-Publish publica na mesma fila que o Worker-Occurrence consome (`occurrences.jobs`).
 
-4. **Idempotência**: A idempotência é garantida pelo `command_inbox` e pelos Jobs do Worker-Occurrence, não pelo Worker-Outbox.
+4. **Idempotência**: A idempotência é garantida pelo `command_inbox` e pelos Jobs do Worker-Occurrence, não pelo Worker-Publish.
 
 ## 🐛 Troubleshooting
 

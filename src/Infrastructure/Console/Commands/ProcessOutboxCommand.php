@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Infrastructure\Console\Commands;
 
 use Domain\Idempotency\Repositories\CommandInboxReadRepositoryInterface;
+use Domain\Idempotency\Repositories\CommandInboxWriteRepositoryInterface;
 use Domain\Outbox\Entities\OutboxEvent;
 use Domain\Outbox\Repositories\OutboxReadRepositoryInterface;
 use Domain\Outbox\Repositories\OutboxWriteRepositoryInterface;
@@ -25,11 +26,12 @@ class ProcessOutboxCommand extends Command
     protected $description = 'Processa eventos PENDING da outbox e publica no RabbitMQ';
 
     public function __construct(
-        private readonly OutboxReadRepositoryInterface           $outboxReadRepository,
+        private readonly OutboxReadRepositoryInterface $outboxReadRepository,
         private readonly OutboxWriteRepositoryInterface $outboxWriteRepository,
-        private readonly CommandInboxReadRepositoryInterface     $commandInboxRepository,
-        private readonly OutboxEventMapper                       $eventMapper,
-        private readonly OutboxQueuePublisher                    $queuePublisher,
+        private readonly CommandInboxReadRepositoryInterface $commandInboxReadRepository,
+        private readonly CommandInboxWriteRepositoryInterface $commandInboxWriteRepository,
+        private readonly OutboxEventMapper $eventMapper,
+        private readonly OutboxQueuePublisher $queuePublisher,
     ) {
         parent::__construct();
     }
@@ -101,7 +103,7 @@ class ProcessOutboxCommand extends Command
         }
 
         try {
-            $command = $this->commandInboxRepository->findByCommandId($event->aggregateId());
+            $command = $this->commandInboxReadRepository->findByCommandId($event->aggregateId());
 
             if ($command === null) {
                 Log::warning('⚠️ [OutboxProcessor] Command not found in command_inbox', [
@@ -132,6 +134,8 @@ class ProcessOutboxCommand extends Command
             }
 
             $this->queuePublisher->publishEvent($event, $command);
+
+            $this->commandInboxWriteRepository->markAsEnqueued($command->id()->toString());
 
             $this->outboxWriteRepository->markAsSent($event->id()->toString());
 
