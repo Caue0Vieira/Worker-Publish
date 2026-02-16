@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Infrastructure\Queue;
 
+use App\Jobs\ProcessCancelOccurrenceJob;
 use App\Jobs\ProcessCloseDispatchJob;
 use App\Jobs\ProcessCreateDispatchJob;
 use App\Jobs\ProcessCreateOccurrenceJob;
@@ -22,6 +23,7 @@ class OutboxQueuePublisher
         'create_occurrence' => ProcessCreateOccurrenceJob::class,
         'start_occurrence' => ProcessStartOccurrenceJob::class,
         'resolve_occurrence' => ProcessResolveOccurrenceJob::class,
+        'cancel_occurrence' => ProcessCancelOccurrenceJob::class,
         'create_dispatch' => ProcessCreateDispatchJob::class,
         'close_dispatch' => ProcessCloseDispatchJob::class,
         'update_dispatch_status' => ProcessUpdateDispatchStatusJob::class,
@@ -109,6 +111,9 @@ class OutboxQueuePublisher
                 $payload['occurrenceId'] ?? '',
             ],
             'resolve_occurrence' => [
+                $payload['occurrenceId'] ?? '',
+            ],
+            'cancel_occurrence' => [
                 $payload['occurrenceId'] ?? '',
             ],
             'create_dispatch' => [

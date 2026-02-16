@@ -12,6 +12,7 @@ class OutboxEventMapper
         'OccurrenceCreateRequested' => 'create_occurrence',
         'OccurrenceStartRequested' => 'start_occurrence',
         'OccurrenceResolvedRequested' => 'resolve_occurrence',
+        'OccurrenceCancelledRequested' => 'cancel_occurrence',
         'DispatchCreateRequested' => 'create_dispatch',
         'DispatchCloseRequested' => 'close_dispatch',
         'DispatchStatusUpdateRequested' => 'update_dispatch_status',
