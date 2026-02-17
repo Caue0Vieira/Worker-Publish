@@ -28,14 +28,14 @@ RUN mkdir -p /app/storage/framework/{sessions,views,cache/data} \
 
 USER application
 
-#RUN composer --version && \
-#    composer clear-cache && \
-#    COMPOSER_DISABLE_XDEBUG_WARN=1 \
-#    COMPOSER_MEMORY_LIMIT=-1 \
-#    COMPOSER_PROCESS_TIMEOUT=1200 \
-#    composer install \
-#    --no-dev \
-#    --prefer-dist \
-#    --optimize-autoloader \
-#    --no-scripts \
-#    -vvv
+RUN composer --version && \
+    composer clear-cache && \
+    COMPOSER_DISABLE_XDEBUG_WARN=1 \
+    COMPOSER_MEMORY_LIMIT=-1 \
+    COMPOSER_PROCESS_TIMEOUT=1200 \
+    composer install \
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts \
+    -vvv
